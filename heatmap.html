@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<title>CRS &rarr; ADT </title>
+	<style>
+
+	body {
+	  padding:40px;
+	}
+
+	#tooltip {
+		position:absolute;
+		top: 10px;
+		left: 10px;
+		padding: 5px;
+		background-color: white;
+
+		-webkit-box-shadow:  0px 0px 10px 0px rgba(0, 0, 0, .3);      
+        box-shadow:  0px 0px 10px 0px rgba(0, 0, 0, .3);
+	}
+
+	</style>
+	<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+	<div class='containter'>
+
+	    <div class='page-header'>
+	      <h1 >
+	        Recoding CRS data 
+	        <small> Which purpose codes went where? </small>
+
+	      </h1>
+	    </div>
+	    <p id='tooltip'>
+	    </p>
+		<div class='row-fluid'>
+			<div id='heatmap' class='span12'>
+			</div>
+		</div>
+	</div>
+</body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js'></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/coffee-script/1.4.0/coffee-script.min.js"></script>
+<script type='text/coffeescript' src='heatmap.coffee'></script>
