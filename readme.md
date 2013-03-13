@@ -4,6 +4,18 @@
 
 Currently deployed at http://aiddata-codes.herokuapp.com.
 
+For examples, try:
+
+- http://aiddata-codes.herokuapp.com/codes
+- http://aiddata-codes.herokuapp.com/codes/72
+- http://aiddata-codes.herokuapp.com/codes/310
+- http://aiddata-codes.herokuapp.com/codes/final/81
+- http://aiddata-codes.herokuapp.com/codes/final/.07
+- http://aiddata-codes.herokuapp.com/codes/code/99820
+- http://aiddata-codes.herokuapp.com/codes/code/11100.01
+
+__Only responds to GET__ 
+
 ### What's the point?
 
 - Keep all code lists in sync
@@ -45,9 +57,13 @@ Codes are numbers which categorize development projects in a hierarchical way.
 
 ## Use
 
+```Ruby
+
 	get '/' do 
 		"try /codes or /codes/7"
 	end
+
+```
 
 ### Getting a list of codes
 
