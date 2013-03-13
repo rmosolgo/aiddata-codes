@@ -55,12 +55,13 @@ Codes are numbers which categorize development projects in a hierarchical way.
 
 `/codes`
 
+```Ruby
 	get '/codes' do
 	 	codes = Code.all
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		return response || "not found"
 	end
-
+```
 
 #### Filter the list by initial digits
 
@@ -68,6 +69,7 @@ Codes are numbers which categorize development projects in a hierarchical way.
 `/codes/72010`
 `/codes/99`
 
+```Ruby
 	get '/codes/:prefix' do
 		if params[:prefix] =~ /[0-9\.]+/
 			codes = Code.all(:code.like => "#{params[:prefix]}%"  )
@@ -76,12 +78,14 @@ Codes are numbers which categorize development projects in a hierarchical way.
 		
 		return response || "not found"
 	end	
+```
 
 #### Filter the list by final digits
 
 `/codes/final/81`
-`/codes/final/10`
+`/codes/final/.10`
 
+```Ruby
 	get '/codes/final/:suffix' do
 		if params[:suffix] =~ /[0-9\.]+/
 			codes = Code.all(:code.like => "%#{params[:suffix]}"  )
@@ -90,6 +94,7 @@ Codes are numbers which categorize development projects in a hierarchical way.
 		
 		return response || "not found"
 	end
+```
 
 ### Getting data for numerical codes
 
@@ -98,6 +103,7 @@ Codes are numbers which categorize development projects in a hierarchical way.
 `/codes/code/99810`
 `/codes/code/11100.01`
 
+```Ruby
 	get '/codes/code/:code' do
 		if params[:code] =~ /[0-9\.]+/
 			code = Code.first(:code => "#{params[:code]}"  )
@@ -106,3 +112,4 @@ Codes are numbers which categorize development projects in a hierarchical way.
 		
 		return response || "not found"
 	end
+```
