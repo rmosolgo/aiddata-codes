@@ -2,6 +2,8 @@
 
 ## General Info
 
+Currently deployed at http://aiddata-codes.herokuapp.com.
+
 ### What's the point?
 
 - Keep all code lists in sync
