@@ -4,7 +4,7 @@
 	require 'dm-postgres-adapter'
 	require 'pg'
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
-	DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres')
+	DataMapper.setup(:default,  ENV['DATABASE_URL'] ||  'postgres://postgres:postgres@localhost/postgres')
 	class Code 
 		include DataMapper::Resource
 		property :code,		String, key: true  
