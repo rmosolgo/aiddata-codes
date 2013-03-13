@@ -1,0 +1,263 @@
+
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  padding:40px;
+}
+
+.chord path {
+  fill-opacity: .67;
+  stroke: #000;
+  stroke-width: .5px;
+}
+
+</style>
+<link href="//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css" rel="stylesheet">
+<body>
+  <div  class='container'>
+    <div class='page-header'>
+      <h1 >
+        Recoding CRS data 
+        <small> Flows get new categories </small>
+
+      </h1>
+    </div>
+
+    <p>
+      <b>How to read this chart:</b>
+      <ul>
+        <li> The <b>outer ring</b> represents the amount of money categorized in that sector in the <b>CRS source data</b></li>
+        <li> The <b>chords</b> show how AidData coding <b>recategorized</b> that money into a different sector.</li>
+        <li>
+          Most chords have 2 ends. The width of an end represents the amount of money which was <i>recoded away from</i> that sector for another sector. 
+          For example: 
+          <ul>
+            <li>
+              About $1.5 billion was called "160**" (in pink) in the CRS and almost all of it was recoded to "9****" (in yellow) by AidData.
+            </li>
+            <li>
+              About $100 billion was called "151**" (on the bottom left) and quite a large bit -- about $68 billion -- was given that sector by AidData.
+            </li>
+          </ul>
+        </li>
+        <li> 
+          If a chord has only 1 end (ie, stays in the same color, like red-to-red), represent $$ which ended up in the <b>same</b> sector after AidData coding.
+        </li>
+        <li> 
+          Mouse over the outer ring to see the chords for that sector.
+        </li>
+      </ul>
+
+    </p>
+
+    <!--h2 >
+      Sectors:
+      <div class='row-fluid' id='labels'>
+      </div>
+
+    </h2-->
+
+    <div id='vis'>
+    </div>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+<script>
+
+// From http://mkweb.bcgsc.ca/circos/guide/tables/
+var matrix = [
+
+[318.7, 22, 7.3, 105.5, 0, 0, 1433.8, 0, 3.1, 0, 0, 15.3, 0, 0, 0, 0, 0, 0, 64.6, 2.8, 14.2],
+[6.7, 62.8, 203.6, 79.2, 0, 6.6, 2996.3, 0, 1.8, 0, 0, 0.3, 0, 0, 0, 0, 0, 0, 66.8, 1, 1.7],
+[9.3, 22.2, 172.6, 137.7, 0, 5.2, 1798.7, 0, 22.9, 0, 0.1, 1.8, 0, 0, 0, 0.9, 0.1, 0.1, 431.2, 67.1, 18.7],
+[0, 15.7, 1.9, 145.8, 0, 0.5, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 316.4, 0, 0],
+[0, 0, 0, 0, 1.2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0.3, 0, 20.9, 9, 0, 53.4, 153.3, 0, 0, 0, 0.1, 0, 0, 0, 0.2, 0, 0, 1.2, 76.7, 100.7, 0.6],
+[7.9, 0, 376.1, 49, 0.7, 10, 3074.4, 0, 8.8, 0, 0.4, 0.4, 0, 0, 0, 4.2, 0, 0, 5446.5, 8.3, 173.9],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0.4, 0, 12.3, 17.3, 0, 0.7, 833.3, 0, 44.1, 0, 0.1, 16.9, 0, 0, 0, 0, 0, 0, 16.6, 10.3, 4.5],
+[2.9, 0, 17, 0.9, 0, 0.7, 329.6, 0, 1, 0, 2.7, 0, 0, 0, 0, 0.1, 0, 0, 1.6, 1.8, 36],
+[1.3, 0, 10, 8.5, 0, 0, 350.7, 0, 0.7, 0, 11.4, 0, 0, 0, 0, 0, 0, 0, 15.2, 1.1, 1],
+[0.2, 0, 5.7, 9.2, 0, 0, 2554.2, 0, 40, 0, 13.8, 7.8, 0, 0, 0, 0, 0, 0, 7.4, 1.2, 1],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[0, 0.1, 6.5, 9.1, 0, 0.7, 767.7, 0, 1.1, 0, 0, 1.8, 0, 3, 0, 7.4, 0, 0, 3.7, 0.9, 10.2],
+[1.1, 0, 16.1, 5.1, 0, 3.9, 322.1, 0, 0.9, 0, 0, 0, 0, 0, 0, 2.5, 0, 0, 13.4, 0.5, 4.4],
+[1.6, 0, 18.8, 10.4, 0, 0.1, 157.7, 0, 0.6, 0, 0, 0.1, 0, 0, 0, 64.8, 0, 0, 34.8, 0.1, 10.9],
+[0.2, 0, 21.3, 10.9, 0, 4.3, 559, 0, 0.6, 0, 0, 0, 0, 0, 0, 0.1, 3561.9, 0, 4.7, 0.3, 1],
+[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+[2178.5, 1257.4, 6441.5, 2785.7, 87.5, 3315.3, 8028.3, 1, 475.8, 100.4, 56.7, 121.9, 21.9, 86, 39, 341.3, 77.3, 262.8, 66814.6, 3322.5, 2802.3],
+[174.6, 137.2, 82.9, 159.1, 0.1, 1429.1, 778.5, 0, 26.5, 4.2, 0, 1.1, 1, 5, 385.2, 33.6, 4.1, 99.4, 1857.4, 12849, 87.4],
+[0.4, 0, 160.8, 36.7, 0, 0, 1211.5, 0, 13.3, 0, 0, 0, 0, 0, 0, 0.9, 0, 0, 63.8, 11.9, 112.8]
+
+
+
+];
+
+headings = [
+2,
+3,
+4,
+5,
+6,
+7,
+9,
+110,
+111,
+112,
+113,
+114,
+120,
+121,
+122,
+130,
+140,
+150,
+151,
+152,
+160
+]
+
+headings_with_padding = headings.map(function(h, j) {
+
+  padding = ""
+  for (i = (5-h.toString().length); i>0; i--) {
+     padding +="*"
+  }
+  return h+ padding
+})
+
+var chord = d3.layout.chord()
+    .padding(.05)
+    .sortSubgroups(d3.descending)
+    .matrix(matrix);
+
+var width = 960,
+    height = 960,
+    innerRadius = Math.min(width, height) * .41,
+    outerRadius = innerRadius * 1.1;
+
+var index_to_fill = d3.scale.ordinal()
+  .domain(d3.range(matrix.length))
+  .rangeBands([0,100], .01)
+
+var fill_color = d3.scale.linear()
+    .domain(d3.range(0,100,(100/7)))
+    .range(["red", "orange", "yellow", "green", "skyblue", "indigo", "violet"]);
+
+function fill(i) {
+  return fill_color(index_to_fill(i))
+}
+
+current_column = 0
+
+// headings_with_padding.forEach(function(h, j) {
+  
+//   if (j % 6 == 0) {
+//     current_column ++ ;
+//     $('#labels').append("<ul class='unstyled span3' id='labels_"+current_column+"'></ul>")
+//   }
+
+//   $('#labels_'+current_column).append(" <li style='color:"+fill(j)+";'>"+h+"</li>")
+//   //return h
+// })
+
+
+
+var svg = d3.select("#vis").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+  .append("g")
+    .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+groups = svg.append("g").selectAll("path")
+    .data(chord.groups)
+
+groups.enter().append("path")
+    .style("fill", function(d) { return fill(d.index); })
+    .style("stroke", function(d) { return fill(d.index); })
+    .attr('class', function(d) { return 'ring ' + (d.value < 3000 ? "too-small" : 'ok') })
+    .attr("id", function(d, i) {return "group_"+i} )
+    .attr("data-index", function(d, i) {return i.toString() })
+    .attr("data-data", function(d, i) {return d.value.toString() })
+    .attr("d", d3.svg.arc().innerRadius(innerRadius).outerRadius(outerRadius))
+    .on("mouseout", fade(1))
+    .on("mouseover",  fade(.1))
+
+  // Add a text label.
+var groups_text = svg.selectAll(".label")
+      .data(headings_with_padding)
+  .enter().append("text")
+    .attr("x", function(d,i) { 
+      value = Number( $("#group_"+i).attr("data-data")) 
+      if(value > 2600)
+        {return 2}
+      else
+        {return (value/3000) * 50} 
+    })
+    .attr("dy", 15);
+
+groups_text.append("textPath")
+    .attr("xlink:href", function(d, i) { return "#group_" + i; })
+    .text(String);
+
+
+
+var ticks = svg.append("g").selectAll("g")
+    .data(chord.groups)
+  .enter().append("g").selectAll("g")
+    .data(groupTicks)
+  .enter().append("g")
+    .attr("transform", function(d) {
+      return "rotate(" + (d.angle * 180 / Math.PI - 90) + ")"
+          + "translate(" + outerRadius + ",0)";
+    });
+
+ticks.append("line")
+    .attr("x1", 1)
+    .attr("y1", 0)
+    .attr("x2", 5)
+    .attr("y2", 0)
+    .style("stroke", "#000");
+
+ticks.append("text")
+    .attr("x", 8)
+    .attr("dy", ".35em")
+    .attr("transform", function(d) { return d.angle > Math.PI ? "rotate(180)translate(-16)" : null; })
+    .style("text-anchor", function(d) { return d.angle > Math.PI ? "end" : null; })
+    .text(function(d) { return d.label; });
+
+svg.append("g")
+    .attr("class", "chord")
+  .selectAll("path")
+    .data(chord.chords)
+  .enter().append("path")
+    .attr("d", d3.svg.chord().radius(innerRadius))
+    .style("fill", function(d) { return fill(d.target.index); })
+    .style("opacity", 1);
+
+// Returns an array of tick angles and labels, given a group.
+function groupTicks(d) {
+  var k = (d.endAngle - d.startAngle) / d.value;
+  return d3.range(0, d.value, 1000).map(function(v, i) {
+    return {
+      angle: v * k + d.startAngle,
+      label: i % 5 ? null : "$" + v / 1000 + " bil"
+    };
+  });
+}
+
+// Returns an event handler for fading a given chord group.
+function fade(opacity) {
+  return function(g, i) {
+    svg.selectAll(".chord path")
+        .filter(function(d) { return d.source.index != i && d.target.index != i; })
+      .transition()
+        .style("opacity", opacity);
+  };
+}
+
+  </script>
+</div>
+</body>
