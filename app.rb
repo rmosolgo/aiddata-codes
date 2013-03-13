@@ -1,34 +1,10 @@
-# AidData Codes API
-
-## General Info
-
-### What's the point?
-
-- Keep all code lists in sync
-- Support applications with data with codes but no descriptions
-
-
-### What it runs on
-
-```Ruby
-
 	require 'rubygems'
 	require 'sinatra'
 	require 'data_mapper'
 	require 'dm-postgres-adapter'
 	require 'pg'
-
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
-
 	DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres')
-```
-
-### What are codes?
-
-Codes are numbers which categorize development projects in a hierarchical way.
-
-```Ruby
-
 	class Code 
 		include DataMapper::Resource
 		property :code,		String, key: true  
@@ -37,34 +13,16 @@ Codes are numbers which categorize development projects in a hierarchical way.
 			"{ \"code\": \"#{self.code}\", \"name\": \"#{self.name}\" }"
 		end
 	end
-
 	DataMapper.finalize.auto_upgrade!
-```
-
-## Use
-
+	
 	get '/' do 
 		"try /codes or /codes/7"
 	end
-
-### Getting a list of codes
-
-#### Get all 
-
-`/codes`
-
 	get '/codes' do
 	 	codes = Code.all
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		return response || "not found"
 	end
-
-
-#### Filter the list by initial digits
-
-`/codes/1`
-`/codes/72010`
-`/codes/99`
 
 	get '/codes/:prefix' do
 		if params[:prefix] =~ /[0-9\.]+/
@@ -75,11 +33,6 @@ Codes are numbers which categorize development projects in a hierarchical way.
 		return response || "not found"
 	end	
 
-#### Filter the list by final digits
-
-`/codes/final/81`
-`/codes/final/10`
-
 	get '/codes/final/:suffix' do
 		if params[:suffix] =~ /[0-9\.]+/
 			codes = Code.all(:code.like => "%#{params[:suffix]}"  )
@@ -88,13 +41,6 @@ Codes are numbers which categorize development projects in a hierarchical way.
 		
 		return response || "not found"
 	end
-
-### Getting data for numerical codes
-
-#### Send a code, get a name
-
-`/codes/code/99810`
-`/codes/code/11100.01`
 
 	get '/codes/code/:code' do
 		if params[:code] =~ /[0-9\.]+/
