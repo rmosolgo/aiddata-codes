@@ -57,13 +57,6 @@ Codes are numbers which categorize development projects in a hierarchical way.
 
 ## Use
 
-```Ruby
-
-	get '/' do 
-		"try /codes or /codes/7"
-	end
-
-```
 
 ### Getting a list of codes
 
