@@ -7,9 +7,22 @@
 		%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
 	%body
 		.container
-			%h1.page-header 
+			%h1.span12.page-header 
 				AidData Sector Codes
 
+
+			%p.span12
+				AidData sector codes are used to categorize development projects.
+			%p.span12
+				See the 
+				%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" } AidData website 
+				for more information about the codes
+				or the
+				%a{href: "https://github.com/rmosolgo/aiddata-codes" } API docs
+				for more about this website.
+			
+			%h2
+				Search codes:
 
 			#params.span12.row-fluid
 				.span3
@@ -30,10 +43,12 @@
 						%option{value: "sector"} Sector
 						%option{value: "supersector"} Supersector
 
+
 			%p.span12
 				%span#matches
 					0
 				codes:
+
 
 			%table#results.span12.table.table-hover
 				%thead
