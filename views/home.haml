@@ -30,9 +30,15 @@
 						%option{value: "sector"} Sector
 						%option{value: "supersector"} Supersector
 
+			%p.span12
+				%span#matches
+					0
+				codes:
+
 			%table#results.span12.table.table-hover
 				%thead
 					%tr
+						%th #
 						%th Code
 						%th Name
 						%th Type
@@ -59,15 +65,17 @@
 					data = $.parseJSON(data)
 					console.log data
 					new_rows = ("<tr>
+									<td> "+(i+1)+"</td>
 									<td> "+d["code"]+"</td>
 									<td> "+d["name"]+"</td>
 									<td> "+d["type"]+"</td>
 								</tr>
-					" for d in data).join()
+					" for d, i in data).join()
 
 					# console.log new_rows
 
 					$('#results tbody').html(new_rows)
+					$('#matches').text(data.length)
 					# $('#params').css "background-color", "inherit"
 				)
 			search_codes()
