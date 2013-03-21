@@ -1,60 +1,72 @@
-%head
 
-	%title AidData Sector Codes
-	%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
-%body
-	.container
-		%h1.page-header Sector Codes
+<!DOCTYPE html>
+%html{lang: "en"}
+	%head
 
-		%p#params
-			Search:
-			%input#text{ type: 'text', value: 'Text search...', onfocus: 'this.value=""' }
-			Starts with:
-			%input#prefix{ type: 'text', value: 'Starts with...', onfocus: 'this.value=""' }
-			Ends with:
-			%input#suffix{ type: 'text', value: 'Ends with...', onfocus: 'this.value=""' }
+		%title AidData Sector Codes
+		%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
+	%body
+		.container
+			%h1.page-header 
+				Sector Codes
+				%small AidData coding scheme
 
+			#params.span12.row-fluid
+				.span3
+					Match text:
+					%input#text.param{ type: 'text'}
+				.span3
+					Starts with:
+					%input#prefix.param{ type: 'text'}
+				.span3
+					Ends with:
+					%input#suffix.param{ type: 'text'}
+				.span3
+					Type:
+					%select#type.param
+						%option
+						%option{value: "activity"} Activity
+						%option{value: "purpose"} Purpose
+						%option{value: "sector"} Sector
+						%option{value: "supersector"} Supersector
 
+			%table#results.span12.table.table-hover
+				%thead
+					%tr
+						%th Code
+						%th Name
+						%th Type
+				%tbody
 
-		%table#results.table
-			%thead
-				%tr
-					%th Code
-					%th Name
-					%th Type
-			%tbody
-
-	%script{ src: "//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
-
-
-	:coffee
-		$('#params input').on('keyup', (e) -> search_codes() )
-
-		search_codes = () ->
-			# $('#params').css "background-color", "#ffe0e0"
-			params = {}
-			for input in $('#params input')
-				if input.value.indexOf('...') == -1 and input.value != ''
-					params[input.id] = input.value
-
-			console.log params
-			
-			$.post("/codes", params, (data) ->
-				data = $.parseJSON(data)
-				console.log data
-				new_rows = ("<tr>
-								<td> "+d["code"]+"</td>
-								<td> "+d["name"]+"</td>
-								<td> "+d["type"]+"</td>
-							</tr>
-				" for d in data).join()
-
-				# console.log new_rows
-
-				$('#results tbody').html(new_rows)
-				# $('#params').css "background-color", "inherit"
-			)
-	 
-			
+		%script{ src: "//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
 
 
+		:coffee
+			$('.param').on('change', (e) -> search_codes() )
+			$('.param').on('keyup', (e) -> search_codes() )
+			search_codes = () ->
+				# $('#params').css "background-color", "#ffe0e0"
+				
+				params = {}
+				for input in $('.param')
+					console.log input
+					if input.value != ''
+						params[input.id] = input.value
+
+				console.log params
+				
+				$.post("/codes", params, (data) ->
+					data = $.parseJSON(data)
+					console.log data
+					new_rows = ("<tr>
+									<td> "+d["code"]+"</td>
+									<td> "+d["name"]+"</td>
+									<td> "+d["type"]+"</td>
+								</tr>
+					" for d in data).join()
+
+					# console.log new_rows
+
+					$('#results tbody').html(new_rows)
+					# $('#params').css "background-color", "inherit"
+				)
