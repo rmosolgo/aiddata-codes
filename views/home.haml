@@ -6,9 +6,14 @@
 	.container
 		%h1.page-header Sector Codes
 
-		%p
-			Text search:
-			%input#text_search{ type: 'text', value: 'Type some text...', onfocus: 'this.value=""' }
+		%p#params
+			Search:
+			%input#text{ type: 'text', value: 'Text search...', onfocus: 'this.value=""' }
+			Starts with:
+			%input#prefix{ type: 'text', value: 'Starts with...', onfocus: 'this.value=""' }
+			Ends with:
+			%input#suffix{ type: 'text', value: 'Ends with...', onfocus: 'this.value=""' }
+
 
 
 		%table#results.table
@@ -23,17 +28,20 @@
 
 
 	:coffee
-		$('#text_search').on('keyup', (e) -> text_search_codes(this.value) )
+		$('#params input').on('keyup', (e) -> search_codes() )
 
-		text_search_codes = (text) -> 
-			$('#text_search').css "background-color", "#ffe0e0"
-			$.post("/codes", {text: text}, (data) ->
+		search_codes = () ->
+			# $('#params').css "background-color", "#ffe0e0"
+			params = {}
+			for input in $('#params input')
+				if input.value.indexOf('...') == -1 and input.value != ''
+					params[input.id] = input.value
 
-				
-
+			console.log params
+			
+			$.post("/codes", params, (data) ->
 				data = $.parseJSON(data)
 				console.log data
-
 				new_rows = ("<tr>
 								<td> "+d["code"]+"</td>
 								<td> "+d["name"]+"</td>
@@ -44,7 +52,9 @@
 				# console.log new_rows
 
 				$('#results tbody').html(new_rows)
-				$('#text_search').css "background-color", "inherit"
-
+				# $('#params').css "background-color", "inherit"
 			)
+	 
+			
+
 

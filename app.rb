@@ -70,20 +70,20 @@
 		return response || "not found"
 	end
 	def find_codes(params)
-		codes = Code.all
-		if params[:prefix] =~ /[0-9\.]+/
+		codes = Code.all(order: [:code.asc])
+		if params[:prefix] 
 			codes = codes & Code.all(:code.like => "#{params[:prefix]}%"  )
 		end
-		if params[:suffix] =~ /[0-9\.]+/
+		if params[:suffix]
 			codes = codes & Code.all(:code.like => "%#{params[:suffix]}"  )
 		end	
-		if params[:type] =~ /\w+/
+		if params[:type] 
 			codes = codes.select { |c| c.type == params[:type]}
 		end
-		if params[:text] =~/[\w,\.\-]+/
-			codes = codes & Code.select { |c| (c.code + c.type.downcase + c.name.downcase).include? params[:text].downcase}
+		if params[:text] 
+			codes = codes & Code.select { |c| "#{c.code} #{c.type.downcase} #{c.name.downcase}".include? params[:text].downcase}
 		end 
-		if params[:code] =~ /[0-9\.]+/
+		if params[:code] 
 			codes = codes & Code.all(:code => "#{params[:code]}"  )
 		end	
 		codes
