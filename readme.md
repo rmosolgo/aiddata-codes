@@ -15,8 +15,8 @@ For examples, try:
 - http://aiddata-codes.herokuapp.com/codes/code/99820
 - http://aiddata-codes.herokuapp.com/codes/code/11100.01
 
-(__Note:__ Except for `/codes`, these routes only respond to `GET` requests. `/codes` also responds
-to `POST` requests.)
+__Note:__ Except for `/codes`, these routes only respond to `GET` requests. `/codes` also responds
+to `POST` requests.
 
 ### How to
 Use routes like those above, or pass params to `/codes`:
@@ -24,6 +24,7 @@ Use routes like those above, or pass params to `/codes`:
 - `type` to filter by type: supersector, sector, purpose, activity (eg, `type=sector` returns 3-digit codes)
 - `prefix` to filter by initial digits (or ".")
 - `suffix` to filter by final digits (or ".")
+- `code` to match by code _exactly_
 
 
 ### What's the point?
@@ -41,10 +42,11 @@ Use routes like those above, or pass params to `/codes`:
 	require 'data_mapper'
 	require 'dm-postgres-adapter'
 	require 'pg'
+	require 'thin'
 
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
 
-	DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres')
+	DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://postgres:postgres@localhost/postgres')
 ```
 
 ### What are codes?
@@ -118,7 +120,7 @@ Codes are numbers which categorize development projects in a hierarchical way.
 
 ```Ruby
 	get '/codes/:prefix' do
-
+		# collects params[:prefix]
 		codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 	
@@ -132,7 +134,7 @@ Codes are numbers which categorize development projects in a hierarchical way.
 
 ```Ruby
 	get '/codes/final/:suffix' do
-
+		# collects params[:suffix]
 		codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		
@@ -150,6 +152,7 @@ You can get a single object instead of an array.
 
 ```Ruby
 	get '/codes/code/:code' do
+		# collects params[:code]
 		# should only return 1
 		code = find_codes(params)[0]
 		response = code.as_json 
@@ -158,6 +161,8 @@ You can get a single object instead of an array.
 ```
 
 ### Underlying function
+This function filters the codes by the params passed from the URL.
+
 ```Ruby
 	def find_codes(params)
 		codes = Code.all

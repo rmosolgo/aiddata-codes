@@ -3,8 +3,9 @@
 	require 'data_mapper'
 	require 'dm-postgres-adapter'
 	require 'pg'
+	require 'thin'
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
-	DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres')
+	DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://postgres:postgres@localhost/postgres')
 	class Code 
 		include DataMapper::Resource
 		property :code,		String, key: true  
@@ -43,17 +44,20 @@
 		return response || "not found"
 	end
 	get '/codes/:prefix' do
+		# collects params[:prefix]
 		codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 	
 	end	
 	get '/codes/final/:suffix' do
+		# collects params[:suffix]
 		codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		
 		return response || "not found"
 	end
 	get '/codes/code/:code' do
+		# collects params[:code]
 		# should only return 1
 		code = find_codes(params)[0]
 		response = code.as_json 
