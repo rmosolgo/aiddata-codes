@@ -4,49 +4,77 @@
 	require 'dm-postgres-adapter'
 	require 'pg'
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
-	DataMapper.setup(:default,  ENV['DATABASE_URL'] ||  'postgres://postgres:postgres@localhost/postgres')
+	DataMapper.setup(:default, 'postgres://postgres:postgres@localhost/postgres')
 	class Code 
 		include DataMapper::Resource
 		property :code,		String, key: true  
 		property :name,		Text     
 		def as_json
-			"{ \"code\": \"#{self.code}\", \"name\": \"#{self.name}\" }"
+			"{ 
+				\"code\" : \"#{self.code}\",
+			 	\"name\" : \"#{self.name}\" ,
+			 	\"type\" : \"#{self.type}\" 
+			 }"
 		end
+		def type
+			if code.length == 8 # xxxxxx.xx
+				"activity"
+			elsif code.length == 5 # xxxxx
+				"purpose"
+			elsif code.length == 3 # xxx
+				"sector"
+			elsif code.length == 1 # x
+				"supersector"
+			else 
+				"unknown"
+			end
+		end
+		# def colors
 	end
 	DataMapper.finalize.auto_upgrade!
-	
-	get '/' do 
-		"try /codes or /codes/7"
-	end
 	get '/codes' do
-	 	codes = Code.all
+	 	codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		return response || "not found"
 	end
-
-	get '/codes/:prefix' do
-		if params[:prefix] =~ /[0-9\.]+/
-			codes = Code.all(:code.like => "#{params[:prefix]}%"  )
-			response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
-		end	
-		
+	post '/codes' do
+	 	codes = find_codes(params)
+		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		return response || "not found"
+	end
+	get '/codes/:prefix' do
+		codes = find_codes(params)
+		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
+	
 	end	
-
 	get '/codes/final/:suffix' do
-		if params[:suffix] =~ /[0-9\.]+/
-			codes = Code.all(:code.like => "%#{params[:suffix]}"  )
-			response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
-		end	
+		codes = find_codes(params)
+		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
 		
 		return response || "not found"
 	end
-
 	get '/codes/code/:code' do
-		if params[:code] =~ /[0-9\.]+/
-			code = Code.first(:code => "#{params[:code]}"  )
-			response = "#{ code.as_json }"
-		end	
-		
+		# should only return 1
+		code = find_codes(params)[0]
+		response = code.as_json 
 		return response || "not found"
+	end
+	def find_codes(params)
+		codes = Code.all
+		if params[:prefix] =~ /[0-9\.]+/
+			codes = codes & Code.all(:code.like => "#{params[:prefix]}%"  )
+		end
+		if params[:suffix] =~ /[0-9\.]+/
+			codes = codes & Code.all(:code.like => "%#{params[:suffix]}"  )
+		end	
+		if params[:type] =~ /\w+/
+			codes = codes.select { |c| c.type == params[:type]}
+		end
+		if params[:text] =~/[\w,\.\-]+/
+			codes = codes & Code.select { |c| c.name.downcase.include? params[:text].downcase}
+		end 
+		if params[:code] =~ /[0-9\.]+/
+			codes = codes & Code.all(:code => "#{params[:code]}"  )
+		end	
+		codes
 	end

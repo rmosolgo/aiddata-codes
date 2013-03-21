@@ -42,8 +42,8 @@ COPY codes (code, name, parent, children, all_children_count) FROM stdin;
 15230	Post-conflict peace-building (un)	152	15230.01	3
 16050	Multisector aid for social services 	160	16050.01	3
 23050	Gas distribution	230	23050.01,23050.02	3
-300	Production sectors	0	310,320,330	3
-700	Humanitarian aid	0	70000,720,730,740	3
+3	Production sectors	0	310,320,330	3
+7	Humanitarian aid	0	70000,720,730,740	3
 23040	Electrical transmission/ distribution	230	23040.01,23040.02,23040.03	3
 23055	Petroleum distribution and storage	230	23055.01,23055.02	3
 24020	Monetary institutions	240	24020.01	3
@@ -688,9 +688,9 @@ COPY codes (code, name, parent, children, all_children_count) FROM stdin;
 22081	Communications, education and training.	220	22081.01	3
 23081	Energy education/training	230	23081.01	3
 23082	Energy research	230	23082.01	3
-400	Multisector/cross-cutting	0	410,420,430	3
-500	Commodity aid and general programme assistance	0	510,520,530	3
-600	Action relating to debt	0	60010,60020,60030,60040	3
+4	Multisector/cross-cutting	0	410,420,430	3
+5	Commodity aid and general programme assistance	0	510,520,530	3
+6	Action relating to debt	0	60010,60020,60030,60040	3
 43050.01	Non-agricultural alternative development, activity unspecified or does not fit elsewhere in group	43050		3
 43050.02	Non-agricultural projects to reduce illicit drug cultivation	43050		3
 43081.01	Multisector education/training activities	43081		3
@@ -770,7 +770,7 @@ COPY codes (code, name, parent, children, all_children_count) FROM stdin;
 72000	Emergency response, combination of purposes	720		3
 92000	Support to non-governmental organizations and government organizations, combination of purposes	920		3
 0	All codes	\N	100,200,300,400,500,600,700,900	3
-900	Other	0	910,920,930,998	3
+9	Other	0	910,920,930,998	3
 12005	Health, purpose unspecified or does not fit under any other applicable codes	120	12005.01	3
 12105	Health, general, purpose unspecified or does not fit under any other applicable codes	121	12105.01	3
 12110	Health policy and administrative management	121	12110.01,12110.02,12110.03,12110.04,12110.05	3
@@ -814,7 +814,7 @@ COPY codes (code, name, parent, children, all_children_count) FROM stdin;
 15205	Conflict prevention and resolution, peace and security, purpose unspecified or does not fit under any other applicable codes	152	15205.01	3
 152	Conflict prevention and resolution, peace and security	150	15200,15205,15210,15220,15230,15240,15250,15261	3
 16020	Employment policy and administrative management	160	16020.01,16020.02,16020.03,16020.04,16020.05,16020.06,16020.07	3
-100	Social infrastructure and services	0	110,120,130,140,150,160	3
+1	Social infrastructure and services	0	110,120,130,140,150,160	3
 21005	Transport and storage, purpose unspecified or does not fit under any other applicable codes	210	21005.01	3
 21010	Transport policy and administrative management	210	21010.01,21010.02,21010.03,21010.04	3
 21050	Air transport	210	21050.01,21050.02,21050.03	3
@@ -823,7 +823,7 @@ COPY codes (code, name, parent, children, all_children_count) FROM stdin;
 22020	Telecommunications	220	22020.01,22020.02,22020.03,22020.04	3
 22030	Radio/television/print media	220	22030.01,22030.02,22030.03	3
 220	Communications	200	22000,22005,22010,22020,22030,22040,22081	3
-200	Economic infrastructure and services	0	210,220,230,240,250	3
+2	Economic infrastructure and services	0	210,220,230,240,250	3
 \.
 
 
