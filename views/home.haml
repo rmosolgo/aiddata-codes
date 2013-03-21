@@ -1,0 +1,50 @@
+%head
+
+	%title AidData Sector Codes
+	%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
+%body
+	.container
+		%h1.page-header Sector Codes
+
+		%p
+			Text search:
+			%input#text_search{ type: 'text', value: 'Type some text...', onfocus: 'this.value=""' }
+
+
+		%table#results.table
+			%thead
+				%tr
+					%th Code
+					%th Name
+					%th Type
+			%tbody
+
+	%script{ src: "//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
+
+
+	:coffee
+		$('#text_search').on('keyup', (e) -> text_search_codes(this.value) )
+
+		text_search_codes = (text) -> 
+			$('#text_search').css "background-color", "#ffe0e0"
+			$.post("/codes", {text: text}, (data) ->
+
+				
+
+				data = $.parseJSON(data)
+				console.log data
+
+				new_rows = ("<tr>
+								<td> "+d["code"]+"</td>
+								<td> "+d["name"]+"</td>
+								<td> "+d["type"]+"</td>
+							</tr>
+				" for d in data).join()
+
+				# console.log new_rows
+
+				$('#results tbody').html(new_rows)
+				$('#text_search').css "background-color", "inherit"
+
+			)
+

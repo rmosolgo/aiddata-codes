@@ -1,9 +1,12 @@
 	require 'rubygems'
+	require 'bundler/setup'
 	require 'sinatra'
 	require 'data_mapper'
 	require 'dm-postgres-adapter'
 	require 'pg'
 	require 'thin'
+	require 'haml'
+	require 'barista'
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
 	DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://postgres:postgres@localhost/postgres')
 	class Code 
@@ -33,6 +36,9 @@
 		# def colors
 	end
 	DataMapper.finalize.auto_upgrade!
+	get '/' do 
+		haml :home
+	end
 	get '/codes' do
 	 	codes = find_codes(params)
 		response = "[ \n #{ codes.map { |c| c.as_json }.join(",\n")  } \n ]"
@@ -75,7 +81,7 @@
 			codes = codes.select { |c| c.type == params[:type]}
 		end
 		if params[:text] =~/[\w,\.\-]+/
-			codes = codes & Code.select { |c| c.name.downcase.include? params[:text].downcase}
+			codes = codes & Code.select { |c| (c.code + c.type.downcase + c.name.downcase).include? params[:text].downcase}
 		end 
 		if params[:code] =~ /[0-9\.]+/
 			codes = codes & Code.all(:code => "#{params[:code]}"  )
