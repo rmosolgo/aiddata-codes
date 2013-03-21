@@ -59,26 +59,28 @@
 						%th Type
 				%tbody
 
-		%script{ src: "//cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js" }
-
+		%script{ src: "jquery.js" }
+		%script{ src: "finch.js" }
 
 		:coffee
-			$('.param').on('change', (e) -> search_codes() )
-			$('.param').on('keyup', (e) -> search_codes() )
-			search_codes = () ->
-				# $('#params').css "background-color", "#ffe0e0"
-				
+			$('.param').on('change', (e) -> navigate_to_params() )
+			$('.param').on('keyup', (e) -> navigate_to_params() )
+			
+			navigate_to_params = () ->
 				params = {}
 				for input in $('.param')
-					console.log input
+					# console.log input
 					if input.value != ''
 						params[input.id] = input.value
 
-				console.log params
-				
+				# console.log "navigate to ", params
+				Finch.navigate "/", params
+
+
+			search_codes = (params) ->
 				$.post("/codes", params, (data) ->
 					data = $.parseJSON(data)
-					console.log data
+					# console.log data
 					new_rows = ("<tr>
 									<td> "+(i+1)+"</td>
 									<td> "+d["code"]+"</td>
@@ -91,6 +93,29 @@
 
 					$('#results tbody').html(new_rows)
 					$('#matches').text(data.length)
-					# $('#params').css "background-color", "inherit"
 				)
-			search_codes()
+
+
+			Finch.route '/', ->
+				console.log "Called home"
+
+				Finch.observe (params) ->
+					if text = params('text')
+						$('#text').val(text)
+					if prefix = params('prefix')
+						$('#prefix').val(prefix)
+					if suffix = params('suffix')
+						$('#suffix').val(suffix)
+					if type = params('type')
+						$('#type').val(type)
+
+					params =
+						text: text
+						suffix: suffix
+						prefix: prefix
+						type: type
+
+					# console.log "from url ", params
+					search_codes(params)
+
+			Finch.listen()
