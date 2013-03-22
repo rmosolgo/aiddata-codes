@@ -5,28 +5,98 @@
 
 		%title AidData Sector Codes
 		%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
+		
 		%script{ src: 'ga.js'}
+
+		:css
+			body {
+				background-color: white;
+			}
+
+			.container {
+				background-color: white;
+				padding: 15px;
+			}
+			.info-menu .dropdown-menu {
+				padding: 10px;
+			}
+
+			.code-example {
+				
+			}
 
 	%body
 		.container
-			%h1.span12.page-header 
+			%h1.row.page-header 
 				AidData Sector Codes
 
+			.info-menu
+				.btn-group
+					%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
+						About Sector Codes
+					.dropdown-menu
+						%p
+							%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" } AidData sector codes
+							are used to 
+							%a{href: "http://blog.aiddata.org/2012/03/benefits-and-drawbacks-of-coding-aid.html"} categorize development projects. 
+							AidData's codes are based on the 
+							%a{href: "http://www.oecd.org/dac/stats/purposecodessectorclassification.htm"} OECD purpose code
+							system. 
+						%p
+							There are four levels of codes, which increase in specificity:
+							%table.table
+								%thead
+									%tr
+										%th Type
+										%th 
+										%th Example
+								%tr
+									%td
+										%b Supersector
+									%td 1-digit, broad designation.
+									%td
+										%em.code-example "3" &ndash; Production Sectors
+								%tr
+									%td
+										%b Sector
+									%td 3-digit designation, where the first digit corresponds to its supersector.
+									%td 
+										%em.code-example "321" &ndash; Industry 
+								%tr
+									%td 
+										%b Purpose
+									%td 5-digit designation, where the first three digits correspond to its sector. 
+									%td 
+										%em.code-example "32120" &ndash; Industrial Development
 
-			%p.span12
-				AidData sector codes are used to categorize development projects.
-			%p.span12
-				See the 
-				%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" } AidData website 
-				for more information about the codes
-				or the
-				%a{href: "https://github.com/rmosolgo/aiddata-codes" } API docs
-				for more about this website.
+								%tr
+									%td 
+										%b Activity
+									%td 7-digit designation, where the first five digits correspond to its purpose. 
+									%td 
+										%em.code-example "32120.05" &ndash; Agro-industries
+				
+				.btn-group
+					%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
+						Other Resources
+					.dropdown-menu
+						%p
+							%a{href: "/codes.csv"} Download 
+							the codes as CSV.
+						%p 
+							The
+							%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" }  AidData website 
+							has more information about the codes.
+						%p
+							The 
+							%a{href: "https://github.com/rmosolgo/aiddata-codes" } API docs
+							have more about this website.
+
 			
 			%h2
 				Search codes:
 
-			#params.span12.row-fluid
+			#params.row
 				.span3
 					Match text:
 					%input#text.param{ type: 'text'}
@@ -36,7 +106,7 @@
 				.span3
 					Ends with:
 					%input#suffix.param{ type: 'text'}
-				.span3
+				.span2
 					Type:
 					%select#type.param
 						%option
@@ -46,24 +116,24 @@
 						%option{value: "supersector"} Supersector
 
 
-			%p.span12
+			%p.row-fluid
 				%span#matches
-					0
+					(Loading...)
 				codes:
 
-
-			%table#results.span12.table.table-hover
-				%thead
-					%tr
-						%th #
-						%th Code
-						%th Name
-						%th Type
-				%tbody
+			.row-fluid
+				%table#results.table.table-hover
+					%thead
+						%tr
+							%th #
+							%th Code
+							%th Name
+							%th Type
+					%tbody
 
 		%script{ src: "jquery.js" }
 		%script{ src: "finch.js" }
-
+		%script{ src: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js" }
 		:coffee
 			App = window.App || {}
 			App.data = []
