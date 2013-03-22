@@ -6,7 +6,7 @@
 		%title AidData Sector Codes
 		%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
 		%script{ src: 'ga.js'}
-		
+
 	%body
 		.container
 			%h1.span12.page-header 
@@ -65,59 +65,87 @@
 		%script{ src: "finch.js" }
 
 		:coffee
-			$('.param').on('change', (e) -> navigate_to_params() )
-			$('.param').on('keyup', (e) -> navigate_to_params() )
+			App = window.App || {}
+			App.data = []
 			
-			navigate_to_params = () ->
-				params = {}
-				for input in $('.param')
-					# console.log input
-					if input.value != ''
-						params[input.id] = input.value
+			$.post("/codes", (data) ->
+				App.data = $.parseJSON(data) || []
+				console.log "loaded"
 
-				# console.log "navigate to ", params
-				Finch.navigate "/", params
+				search_codes = (params) ->
+					console.log "searching", params
+					if App.data? and App.data.length > 0	
+						data = App.data.filter((d) ->
+							passes = true
+							if params["type"]
+								passes = passes and d.type == params["type"]
+							if params["text"]
+								passes = passes and d.name.toLowerCase().indexOf(params["text"].toLowerCase()) != -1
+							if params["prefix"]
+								passes = passes and d.code[0..params["prefix"].length-1] == params["prefix"]
+							if params["suffix"]
+								passes = passes and d.code[-params["suffix"].length..] == params["suffix"]
+							passes
+							)
+
+						console.log data
+						new_rows = ("<tr>
+										<td> "+(i+1)+"</td>
+										<td> "+d["code"]+"</td>
+										<td> "+d["name"]+"</td>
+										<td> "+d["type"]+"</td>
+									</tr>
+						" for d, i in data).join()
+						$('#results tbody').html(new_rows)
+						$('#matches').text(data.length)
+					else
+						console.log "Not loaded yet..." 
+						# setTimeout(search_codes(params), 500)
+				
 
 
-			search_codes = (params) ->
-				$.post("/codes", params, (data) ->
-					data = $.parseJSON(data)
-					# console.log data
-					new_rows = ("<tr>
-									<td> "+(i+1)+"</td>
-									<td> "+d["code"]+"</td>
-									<td> "+d["name"]+"</td>
-									<td> "+d["type"]+"</td>
-								</tr>
-					" for d, i in data).join()
-
-					# console.log new_rows
-
-					$('#results tbody').html(new_rows)
-					$('#matches').text(data.length)
-				)
 
 
-			Finch.route '/', ->
-				console.log "Called home"
+				
+					
 
-				Finch.observe (params) ->
-					if text = params('text')
-						$('#text').val(text)
-					if prefix = params('prefix')
-						$('#prefix').val(prefix)
-					if suffix = params('suffix')
-						$('#suffix').val(suffix)
-					if type = params('type')
-						$('#type').val(type)
+				Finch.route "/", () ->
+					Finch.observe (params) ->
+						if text = params('text')
+							$('#text').val(text)
+						if prefix = params('prefix')
+							$('#prefix').val(prefix)
+						if suffix = params('suffix')
+							$('#suffix').val(suffix)
+						if type = params('type')
+							$('#type').val(type)
 
-					params =
-						text: text
-						suffix: suffix
-						prefix: prefix
-						type: type
+						params =
+							text: text 
+							suffix: suffix
+							prefix: prefix
+							type: type
 
-					# console.log "from url ", params
-					search_codes(params)
+						console.log "Observed ", params
+						search_codes(params)
+				
+				Finch.listen()			
 
-			Finch.listen()
+
+			
+				navigate_to_params = () ->
+					params = {}
+					for input in $('.param')
+						# console.log input
+						if input.value != ''
+							params[input.id] = input.value
+
+					console.log "navigate_to", Finch.navigate "/", params, false
+
+				$('.param').on('change', (e) -> navigate_to_params() )
+				$('.param').on('keyup', (e) -> navigate_to_params() )
+
+			)
+
+
+
