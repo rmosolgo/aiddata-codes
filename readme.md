@@ -48,6 +48,10 @@ Use routes like those above, or pass params to `/codes`:
 	require 'barista'
 	require "sinatra/reloader" if development? # doesn't work inside .md :(
 
+    configure :production do
+      require 'newrelic_rpm'
+    end
+    
 	DataMapper.setup(:default, ENV['DATABASE_URL'] || 'postgres://postgres:postgres@localhost/postgres')
 ```
 

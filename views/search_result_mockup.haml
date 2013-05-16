@@ -1,0 +1,126 @@
+%body{style:"font-size:.8em;"}
+	.containerx
+		%table.table
+			%thead
+				%tr
+					%th ID
+					%th Years
+					%th Donors
+					%th Recipients
+					%th 
+						&darr;
+						Title
+					%th 
+						Committed 
+						%br
+						%small.muted (USD-2009)
+					%th 
+						Disbursed
+						%br 
+						%small.muted (USD-2009)
+					%th Sector
+					%th Participating Organizations
+
+			%tbody{style: "font-size:.8em;"}
+				- 20.times do |i|
+					%tr
+						%td="#{(1..9).to_a.sample}#{(100..600).to_a.sample}#{(100..200).to_a.sample}"
+						%td="#{year = ((1989..2010).to_a.sample)}#{(dif = (0..5).to_a.sample) > 0 ? "-#{year+dif}" : "" }"
+						%td="#{["Kuwait", "Canada", "United Kingdom", "France", "World Bank", "Islamic Development Bank", "India", "Brazil", "Netherlands", "Germany", "Japan", "United States", "Gates Foundation", "Asian Development Bank", "Denmark",].sample(1 + (0..200).to_a.sample/100 ).join(", ")}"
+						%td="#{%w{Rwanda Mauritius India Nepal Nicaragua Bolivia Kenya Ghana Togo Algeria Azerbaijan Uzbekistan Russia Poland Mexico Fiji China}.sample( (1..2).to_a.sample ).join(", ") }"
+						%td
+							%a{href:'#'}
+								="#{ (text = ['Solidarity contribution to repairing damage after a fire in the Anna Amalia Library in Weimar',
+								'Baby Food Production Project',
+								'Balance of Payments Support',
+								'Balance of Payments Support Loan',
+								'Caribbean Technological Consultancy Services',
+								'CN-CF-Inner Mongolia Huitengxile Wind F ',
+								'Electricidad de Cortes, S. de R.L. de C.V.uIFC provided a risk management facility to hedge currency risk in a FY95 project that supplies electricity to the state utility and industrial customers.',
+								'Establish 20 private medical diagnostic centers throughout East Asia',
+								'Expand plant capacity for production of frozen and processed meat',
+								'Expand wholesale distribution operations through funds raised in a rights issue.',
+								'EXTENSION IMPROVEMENT OF TELECOMMUN',
+								'FED. STATES CONTRIBUTIONS',
+								'Fiscal Decentralization',
+								'Human Resource Development in Banks',
+								'Increase the capital of a fund management company for a private equity fund providing growth capital to domestic SMEs',
+								'Industry Energy Conservation Program',
+								'Institutional Support to the National Bank of Angola (Grant)',
+								'International Centre of Insect Physiology and Ecology (ICIPE); Nairobi, Kenya',
+								'Model OSZE ',
+								'Modernisation of the Customs and Excise Department - TA Loan',
+								'Operations with cooperation funds',
+								'Small Farm Development and Irrigation Rehabilitation',
+								'Small industry loans',
+								'Strengthening Financial Management of Rural Producer Organizations',
+								'Support for Transformation Process - LIAT (1974) Ltd',
+								'Waqf for COMSTECH Institute of Advanced Training (CIAT), Islamabad'][i] )[0..140]+ (text.length > 140 ? "..." : "") }"
+						%td="$#{(amt = ((((1..100).to_a.sample)/100.0) * 5000000)).round.to_s.gsub(/(\d)(?=\d{3}+(?:\.|$))(\d{3}\..*)?/,'\1,\2')}"
+						%td="$#{(amt * 0.85).round.to_s.gsub(/(\d)(?=\d{3}+(?:\.|$))(\d{3}\..*)?/,'\1,\2')}"
+						%td 
+							="#{['Road transport',
+							'Road transport',
+							'Livestock',
+							'Multisector aid',
+							'Water transport',
+							'Debt forgiveness',
+							'Road transport',
+							'Health policy & admin. management',
+							'Fishery development',
+							'Sectors not specified',
+							'Industrial development',
+							'Sectors not specified',
+							'Agricultural inputs',
+							'General budget support',
+							'Road transport',
+							'Food security programmes/food aid',
+							'Sectors not specified',
+							'Air transport',
+							'Chemicals',
+							'Higher education',
+							'Agro-industries',
+							'Higher education',
+							'Sectors not specified',
+							'Fishery development',
+							][i]}"
+						%td
+							="#{['THE HOPE ASSOCIATION',
+							'Bratislava-Belgrade Fund',
+							'SREC',
+							'NANDI INVESTMENTS LTD',
+							'DRGORAN',
+							'Art.',
+							'TIBLZOO',
+							'Association of African Universities',
+							'TDA',
+							'UNIVERSITY ADDIS ABEBA',
+							'YPEJ/YDAS-1/EUROPEAN PUBLIC LAW CENTER OF',
+							'INAHINA',
+							'PRIME MIN UNDERSECRETARIATO TREASUR',
+							'CODE=50000; NAME: CONCILIATION RESOURCES (CR)',
+							'MV',
+							'Government, His Highness Sheikh Zayed',
+							'AFGHANISTAN MINISTRY OF FINANCE',
+							'Other Netherlands Developm Fin. Comp',
+							'DECC',
+							'Istituto per l’Europa Centro Orientale e Balcanica (IECOB)',
+							'EDUC',
+							'BM:UKK',
+							'MESS',
+							'MIN.DE FINANZAS PUBLICAS DIR.',
+							'AYOJANA FUND PVT LTD',
+							'NUPI, ACCORD, ISS',
+							'DEMOKRATIKUS',
+							'World Bank - International Development Association (IDA)',
+							'MEN',
+							'MPW',
+							'KFW/KU',
+							'NORFUND',
+							'NEFE/CIDA',
+							'Bill & Melinda Gates Foundation',
+							'MPA'].sample((0..2).to_a.sample).join(", ")[0..80]}"
+
+
+
+

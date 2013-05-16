@@ -1,221 +1,192 @@
+%body
+	.container
+		%h1.row.page-header 
+			AidData Sector Codes
 
-<!DOCTYPE html>
-%html{lang: "en"}
-	%head
+		.info-menu
+			.btn-group
+				%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
+					About Sector Codes
+				.dropdown-menu
+					%p
+						%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" } AidData sector codes
+						are used to 
+						%a{href: "http://blog.aiddata.org/2012/03/benefits-and-drawbacks-of-coding-aid.html"} categorize development projects. 
+						AidData's codes are based on the 
+						%a{href: "http://www.oecd.org/dac/stats/purposecodessectorclassification.htm"} OECD purpose code
+						system. 
+					%p
+						There are four levels of codes, which increase in specificity:
+						%table.table
+							%thead
+								%tr
+									%th Type
+									%th 
+									%th Example
+							%tr
+								%td
+									%b Supersector
+								%td 1-digit, broad designation.
+								%td
+									%em.code-example "3" &ndash; Production Sectors
+							%tr
+								%td
+									%b Sector
+								%td 3-digit designation, where the first digit corresponds to its supersector.
+								%td 
+									%em.code-example "321" &ndash; Industry 
+							%tr
+								%td 
+									%b Purpose
+								%td 5-digit designation, where the first three digits correspond to its sector. 
+								%td 
+									%em.code-example "32120" &ndash; Industrial Development
 
-		%title AidData Sector Codes
-		%link{ href: "//netdna.bootstrapcdn.com/bootswatch/2.3.0/cosmo/bootstrap.min.css", rel: "stylesheet"}
+							%tr
+								%td 
+									%b Activity
+								%td 7-digit designation, where the first five digits correspond to its purpose. 
+								%td 
+									%em.code-example "32120.05" &ndash; Agro-industries
+			
+			.btn-group
+				%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
+					Other Resources
+				.dropdown-menu
+					%p
+						%a{href: "/codes.csv"} Download 
+						the codes as CSV.
+					%p 
+						The
+						%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" }  AidData website 
+						has more information about the codes.
+					%p
+						The 
+						%a{href: "https://github.com/rmosolgo/aiddata-codes" } API docs
+						have more about this website.
+
 		
-		%script{ src: 'ga.js'}
+		%h2
+			Search codes:
 
-		:css
-			body {
-				background-color: white;
-			}
+		#params.row
+			.span3
+				Match text:
+				%input#text.param{ type: 'text'}
+			.span3
+				Starts with:
+				%input#prefix.param{ type: 'text'}
+			.span3
+				Ends with:
+				%input#suffix.param{ type: 'text'}
+			.span2
+				Type:
+				%select#type.param
+					%option
+					%option{value: "activity"} Activity
+					%option{value: "purpose"} Purpose
+					%option{value: "sector"} Sector
+					%option{value: "supersector"} Supersector
 
-			.container {
-				background-color: white;
-				padding: 15px;
-			}
-			.info-menu .dropdown-menu {
-				padding: 10px;
-			}
 
-			.code-example {
-				
-			}
+		%p.row-fluid
+			%span#matches
+				(Loading...)
+			codes:
 
-	%body
-		.container
-			%h1.row.page-header 
-				AidData Sector Codes
+		.row-fluid
+			%table#results.table.table-hover
+				%thead
+					%tr
+						%th #
+						%th Code
+						%th Name
+						%th Type
+				%tbody
 
-			.info-menu
-				.btn-group
-					%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
-						About Sector Codes
-					.dropdown-menu
-						%p
-							%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" } AidData sector codes
-							are used to 
-							%a{href: "http://blog.aiddata.org/2012/03/benefits-and-drawbacks-of-coding-aid.html"} categorize development projects. 
-							AidData's codes are based on the 
-							%a{href: "http://www.oecd.org/dac/stats/purposecodessectorclassification.htm"} OECD purpose code
-							system. 
-						%p
-							There are four levels of codes, which increase in specificity:
-							%table.table
-								%thead
-									%tr
-										%th Type
-										%th 
-										%th Example
-								%tr
-									%td
-										%b Supersector
-									%td 1-digit, broad designation.
-									%td
-										%em.code-example "3" &ndash; Production Sectors
-								%tr
-									%td
-										%b Sector
-									%td 3-digit designation, where the first digit corresponds to its supersector.
-									%td 
-										%em.code-example "321" &ndash; Industry 
-								%tr
-									%td 
-										%b Purpose
-									%td 5-digit designation, where the first three digits correspond to its sector. 
-									%td 
-										%em.code-example "32120" &ndash; Industrial Development
 
-								%tr
-									%td 
-										%b Activity
-									%td 7-digit designation, where the first five digits correspond to its purpose. 
-									%td 
-										%em.code-example "32120.05" &ndash; Agro-industries
-				
-				.btn-group
-					%a.btn.dropdown-toggle{ "data-toggle" => "dropdown"}
-						Other Resources
-					.dropdown-menu
-						%p
-							%a{href: "/codes.csv"} Download 
-							the codes as CSV.
-						%p 
-							The
-							%a{href: "http://www.aiddata.org/content/index/user-guide/coding-scheme" }  AidData website 
-							has more information about the codes.
-						%p
-							The 
-							%a{href: "https://github.com/rmosolgo/aiddata-codes" } API docs
-							have more about this website.
+	:coffee
+		App = window.App || {}
+		App.data = []
+		
+		$.post("/codes", (data) ->
+			App.data = $.parseJSON(data) || []
+			console.log "loaded"
 
+			search_codes = (params) ->
+				console.log "searching", params
+				if App.data? and App.data.length > 0	
+					data = App.data.filter((d) ->
+						passes = true
+						if params["type"]
+							passes = passes and d.type == params["type"]
+						if params["text"]
+							passes = passes and d.name.toLowerCase().indexOf(params["text"].toLowerCase()) != -1
+						if params["prefix"]
+							passes = passes and d.code[0..params["prefix"].length-1] == params["prefix"]
+						if params["suffix"]
+							passes = passes and d.code[-params["suffix"].length..] == params["suffix"]
+						passes
+						)
+
+					console.log data
+					new_rows = ("<tr>
+									<td> "+(i+1)+"</td>
+									<td> "+d["code"]+"</td>
+									<td> "+d["name"]+"</td>
+									<td> "+d["type"]+"</td>
+								</tr>
+					" for d, i in data).join()
+					$('#results tbody').html(new_rows)
+					$('#matches').text(data.length)
+				else
+					console.log "Not loaded yet..." 
+					# setTimeout(search_codes(params), 500)
 			
-			%h2
-				Search codes:
-
-			#params.row
-				.span3
-					Match text:
-					%input#text.param{ type: 'text'}
-				.span3
-					Starts with:
-					%input#prefix.param{ type: 'text'}
-				.span3
-					Ends with:
-					%input#suffix.param{ type: 'text'}
-				.span2
-					Type:
-					%select#type.param
-						%option
-						%option{value: "activity"} Activity
-						%option{value: "purpose"} Purpose
-						%option{value: "sector"} Sector
-						%option{value: "supersector"} Supersector
 
 
-			%p.row-fluid
-				%span#matches
-					(Loading...)
-				codes:
-
-			.row-fluid
-				%table#results.table.table-hover
-					%thead
-						%tr
-							%th #
-							%th Code
-							%th Name
-							%th Type
-					%tbody
-
-		%script{ src: "jquery.js" }
-		%script{ src: "finch.js" }
-		%script{ src: "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js" }
-		:coffee
-			App = window.App || {}
-			App.data = []
-			
-			$.post("/codes", (data) ->
-				App.data = $.parseJSON(data) || []
-				console.log "loaded"
-
-				search_codes = (params) ->
-					console.log "searching", params
-					if App.data? and App.data.length > 0	
-						data = App.data.filter((d) ->
-							passes = true
-							if params["type"]
-								passes = passes and d.type == params["type"]
-							if params["text"]
-								passes = passes and d.name.toLowerCase().indexOf(params["text"].toLowerCase()) != -1
-							if params["prefix"]
-								passes = passes and d.code[0..params["prefix"].length-1] == params["prefix"]
-							if params["suffix"]
-								passes = passes and d.code[-params["suffix"].length..] == params["suffix"]
-							passes
-							)
-
-						console.log data
-						new_rows = ("<tr>
-										<td> "+(i+1)+"</td>
-										<td> "+d["code"]+"</td>
-										<td> "+d["name"]+"</td>
-										<td> "+d["type"]+"</td>
-									</tr>
-						" for d, i in data).join()
-						$('#results tbody').html(new_rows)
-						$('#matches').text(data.length)
-					else
-						console.log "Not loaded yet..." 
-						# setTimeout(search_codes(params), 500)
-				
-
-
-
-
-				
-					
-
-				Finch.route "/", () ->
-					Finch.observe (params) ->
-						if text = params('text')
-							$('#text').val(text)
-						if prefix = params('prefix')
-							$('#prefix').val(prefix)
-						if suffix = params('suffix')
-							$('#suffix').val(suffix)
-						if type = params('type')
-							$('#type').val(type)
-
-						params =
-							text: text 
-							suffix: suffix
-							prefix: prefix
-							type: type
-
-						console.log "Observed ", params
-						search_codes(params)
-				
-				Finch.listen()			
 
 
 			
-				navigate_to_params = () ->
-					params = {}
-					for input in $('.param')
-						# console.log input
-						if input.value != ''
-							params[input.id] = input.value
+				
 
-					console.log "navigate_to", Finch.navigate "/", params, false
+			Finch.route "/", () ->
+				Finch.observe (params) ->
+					if text = params('text')
+						$('#text').val(text)
+					if prefix = params('prefix')
+						$('#prefix').val(prefix)
+					if suffix = params('suffix')
+						$('#suffix').val(suffix)
+					if type = params('type')
+						$('#type').val(type)
 
-				$('.param').on('change', (e) -> navigate_to_params() )
-				$('.param').on('keyup', (e) -> navigate_to_params() )
+					params =
+						text: text 
+						suffix: suffix
+						prefix: prefix
+						type: type
 
-			)
+					console.log "Observed ", params
+					search_codes(params)
+			
+			Finch.listen()			
+
+
+		
+			navigate_to_params = () ->
+				params = {}
+				for input in $('.param')
+					# console.log input
+					if input.value != ''
+						params[input.id] = input.value
+
+				console.log "navigate_to", Finch.navigate "/", params, false
+
+			$('.param').on('change', (e) -> navigate_to_params() )
+			$('.param').on('keyup', (e) -> navigate_to_params() )
+
+		)
 
 
 
